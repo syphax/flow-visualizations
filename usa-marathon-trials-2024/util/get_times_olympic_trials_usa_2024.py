@@ -87,8 +87,8 @@ df_results['time_min'] = df_results['time_sec'] / 60.0
 # %%
 # Save the raw results by mile:
 
-df_results[df_results['sex']=='M'].to_csv(os.path.join('..', 'usa-marathon-trials-2024', 'data', 'result_mens_by_mile.csv'))
-df_results[df_results['sex']=='F'].to_csv(os.path.join('..', 'usa-marathon-trials-2024', 'data', 'result_womens_by_mile.csv'))
+df_results[df_results['sex']=='M'].to_csv(os.path.join('..', 'public', 'data', 'result_men_by_mile.csv'), index=False)
+df_results[df_results['sex']=='F'].to_csv(os.path.join('..', 'public', 'data', 'result_women_by_mile.csv'), index=False)
 
 # %%
 # Interpolate distances for fixed time intervals
@@ -163,8 +163,8 @@ df_distances = pd.concat(list_df_distances, axis=0)
 # %%
 # Save the raw results by mile:
 
-df_distances[df_distances['gender']=='M'].to_csv(os.path.join('..', 'usa-marathon-trials-2024', 'data', 'result_mens_by_5min.csv'))
-df_distances[df_distances['gender']=='F'].to_csv(os.path.join('..', 'usa-marathon-trials-2024', 'data', 'result_womens_by_5min.csv'))
+df_distances[df_distances['gender']=='M'].to_csv(os.path.join('..', 'public', 'data', 'result_men_by_5min.csv'), index=False)
+df_distances[df_distances['gender']=='F'].to_csv(os.path.join('..', 'public', 'data', 'result_women_by_5min.csv'), index=False)
 
 
 # %%

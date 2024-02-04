@@ -1,48 +1,55 @@
-import logo from './logo.svg';
+//import logo from './logo.svg';
 import './App.css';
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
+//import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+//import { MantineProvider } from '@mantine/core';
 
-// export default App;
+// import RunnersChart from './RunnersChart'; 
+//import DataViewer from './DataViewer';
 
-import React from 'react';
-import { RunnersChart } from './RunnersChart';
-
-//import { runners } from './data'; // Assuming you export your data from a 'data.js' file
-
-d3.csv("./data/results_mens_by_5min.csv").then(function(runners) {
-  // Now `data` is an array of objects
-  // Each object represents a row in the CSV, with column headers as keys
-  
-  console.log(runners);
-
-});
+import DataLoader from './DataLoader';
+import MarathonChart from './MarathonChart';
 
 function App() {
+
+  const [data, setData] = useState([]);
+
   return (
     <div className="App">
-      <RunnersChart runners={runners} />
+      <header className="App-header">
+        <p>Load Data</p>
+        {/* <DataViewer /> 
+        */}
+        <DataLoader onDataLoaded={setData} />
+        {data.length > 0 ? <MarathonChart data={data} /> : <p>Loading data...</p>}
+
+      </header>
     </div>
   );
 }
 
 export default App;
+
+// // function App() {
+// //   const [runners, setRunners] = useState([]);
+
+// //   useEffect(() => {
+// //     d3.csv("/data/result_men_by_5min.csv").then(data => {
+// //       console.log(data);
+// //       setRunners(data); // Store the loaded data in state
+// //     });
+// //   }, []); // Empty dependency array means this effect runs once on mount
+
+// //   return (
+// //     <div className="App">
+// //       {runners.length > 0 ? (
+// //         <RunnersChart runners={runners} />
+// //       ) : (
+// //         <div>Loading data...</div>
+// //       )}
+// //     </div>
+// //   );
+// // }
+
+// // export default App;

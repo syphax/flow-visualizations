@@ -54,14 +54,14 @@ const RunnersChart = ({ runners }) => {
     <>
       <Slider
         min={0}
-        max={60} // Assuming times are up to an hour for simplicity
-        value={parseInt(selectedTime.split(":")[1], 10)} // Convert "MM:SS" to minutes as integer
-        onChange={(value) => setSelectedTime(`00:${value < 10 ? `0${value}` : value}`)}
-        label={(value) => `00:${value < 10 ? `0${value}` : value}`}
+        max={300} 
+        value={selectedTime}
+        onChange={setSelectedTime}
+        label={(value) => `${value} minutes`}
         marks={[
-          { value: 0, label: '00:00' },
-          { value: 30, label: '00:30' },
-          { value: 60, label: '01:00' }
+          { value: 0, label: 'Start' },
+          { value: 120, label: '2 hours' },
+          { value: 180, label: '3 hours' } 
         ]}
       />
       <svg ref={svgRef}></svg>
