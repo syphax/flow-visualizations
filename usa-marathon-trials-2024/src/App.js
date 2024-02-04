@@ -18,9 +18,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p>Load Data</p>
-        {/* <DataViewer /> 
-        */}
+        <p>2024 US Marathon Trials Visualizer</p>
         <DataLoader onDataLoaded={setData} />
         {data.length > 0 ? <MarathonChart data={data} /> : <p>Loading data...</p>}
 
@@ -30,26 +28,3 @@ function App() {
 }
 
 export default App;
-
-// // function App() {
-// //   const [runners, setRunners] = useState([]);
-
-// //   useEffect(() => {
-// //     d3.csv("/data/result_men_by_5min.csv").then(data => {
-// //       console.log(data);
-// //       setRunners(data); // Store the loaded data in state
-// //     });
-// //   }, []); // Empty dependency array means this effect runs once on mount
-
-// //   return (
-// //     <div className="App">
-// //       {runners.length > 0 ? (
-// //         <RunnersChart runners={runners} />
-// //       ) : (
-// //         <div>Loading data...</div>
-// //       )}
-// //     </div>
-// //   );
-// // }
-
-// // export default App;

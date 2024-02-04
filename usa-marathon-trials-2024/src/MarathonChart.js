@@ -47,7 +47,7 @@ function MarathonChart({ data }) {
         .data(filteredData)
         .enter()
         .append("g")
-        .attr("transform", (d, i) => `translate(0, ${i * 15})`);
+        .attr("transform", (d, i) => `translate(0, ${i * 5})`);
 
         // Add lines for distances
         runnerGroups.append("line")
@@ -62,7 +62,7 @@ function MarathonChart({ data }) {
         // Add names
         runnerGroups.append("text")
         .attr("x", d => xScale(d.distance) + 5) // Position text at the end of the line
-        .attr("y", (d, i) => i * 5 + 5) // Adjust y based on row index
+        .attr("y", (d, i) => i ) // Adjust y based on row index
         .attr("text-anchor", "start") // Adjust text anchor to start
         .text(d => d.name)
         .style("font-size", "small");
@@ -76,7 +76,8 @@ function MarathonChart({ data }) {
     };
     
     return (
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
           <label>
             Time: {selectedTime} minutes
             <input
@@ -88,7 +89,7 @@ function MarathonChart({ data }) {
               step="5"
             />
           </label>
-          <svg ref={svgRef}></svg>
+          <svg ref={svgRef} style={{ alignSelf: 'stretch' }}></svg>
         </div>
       );
     }
