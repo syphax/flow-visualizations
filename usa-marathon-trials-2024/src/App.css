@@ -37,3 +37,27 @@
   }
 }
 
+.dropdown {
+  margin-top: 20px; 
+  margin-bottom: 20px; 
+  display: flex; 
+  align-items: center; 
+}
+
+.time_slider {
+  margin-bottom: 20px; 
+  display: flex; 
+  align-items: center; 
+}
+
+.time_slider label {
+  margin-right: 10px; 
+  white-space: nowrap; 
+}
+
+.footnote {
+  font-size: 0.75em; 
+  color: #666;
+  margin-top: 5px; 
+  margin-bottom: 5px; 
+}

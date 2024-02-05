@@ -41,13 +41,13 @@ function MarathonChart({ data }) {
 
         // Set dimensions
         const width = 1000;
-        const height = filteredData.length * 20;
+        const height = filteredData.length * 8;
         svg.attr("width", width).attr("height", height);
 
         // Scale for distances
         const xScale = d3.scaleLinear()
         //.domain([d3.min(filteredData, d => d.distance_diff_m), d3.max(filteredData, d => d.distance_diff_m * 1.5)])
-        .domain([-3200, 800])
+        .domain([-3200, 1000])
         .range([0, width]);
 
         // Vertical lines
@@ -55,11 +55,11 @@ function MarathonChart({ data }) {
           .attr("x1", xScale(0))
           .attr("y1", 0)
           .attr("x2", xScale(0))
-          .attr("y2", height) // Assuming 'height' is the height of your chart
+          .attr("y2", height) 
           .attr("stroke", "black") // Dark color for the line at zero
           .attr("stroke-width", 4); // Make it a bit thicker
 
-          for (let i = -1600; i <= 400; i += 100) {
+          for (let i = -1600; i <= 800; i += 100) {
             svg.append("line") // Append a new line element for each line
               .attr("x1", xScale(i))
               .attr("y1", 0)
@@ -72,8 +72,8 @@ function MarathonChart({ data }) {
 
         // Color scale
         const colorScale = d3.scaleLinear()
-        .domain([d3.min(filteredData, d => d.distance_diff_m), d3.max(filteredData, d => d.distance_diff_m)])
-        //.domain([-1600, 200])
+        //.domain([d3.min(filteredData, d => d.distance_diff_m), d3.max(filteredData, d => d.distance_diff_m)])
+        .domain([-1600, 400])
         .range(["lightblue", "darkblue"]);
         
         // Create a group for each runner
@@ -81,7 +81,7 @@ function MarathonChart({ data }) {
         .data(filteredData)
         .enter()
         .append("g")
-        .attr("transform", (d, i) => `translate(0, ${(i + 2) * 5})`);
+        .attr("transform", (d, i) => `translate(0, ${(i + 4) * 5})`);
 
         // Add lines for distances
 
@@ -98,20 +98,41 @@ function MarathonChart({ data }) {
         runnerGroups.append("circle")
           .attr("cx", d => xScale(d.distance_diff_m))
           .attr("cy", 0) // Adjust if your y positioning is different
-          .attr("r", 3) // Small radius for the circle
-          .attr("fill", "white") // White or light gray interior
+          .attr("r", 4) // Small radius for the circle
+          //.attr("fill", "white") // White or light gray interior
+          .attr("fill", d => d.distance_diff_m >= 0 ? "orange" : "white")
           .attr("stroke", "blue") // Thin blue border
-          .attr("stroke-width", 1); // Make the border thin
-    
+          .attr("stroke-width", 1) // Make the border thin
+          
+          // .each(function(d) { 
+          //   d3.select(this)
+          //     .append("title")
+          //     .text(`Runner: ${d.name}, Distance convered (mi): ${d.distance}, Distance from 3rd (m): ${d.distance_diff_m}`);
+          // });
+
         // Add names
         runnerGroups.append("text")
-        .attr("x", d => xScale(d.distance_diff_m) + 5) // Position text at the end of the line
+        .attr("x", d => xScale(d.distance_diff_m) + 8) // Position text at the end of the line
         .attr("y", (d, i) => 2 ) // Adjust y based on row index
         .attr("text-anchor", "start") // Adjust text anchor to start
         .text(d => d.name)
+        .attr("fill", "white")
         //.style("font-size", "small");
         .style("font-size", "10px"); 
 
+        const firstRunnerWithZeroDiff = filteredData.filter(d => d.distance_diff_m === 0)[0];
+        console.log(firstRunnerWithZeroDiff)
+        if (firstRunnerWithZeroDiff) {
+          const formattedValue = `${(firstRunnerWithZeroDiff.distance).toFixed(1)}M`;
+          console.log(formattedValue)
+          svg.append("text")
+            .attr("x", xScale(0))
+            .attr("y", 14) // Adjust this based on your chart's layout
+            .attr("text-anchor", "middle")
+            .attr("fill", "white")
+            .style("font-size", "16px")
+            .text(formattedValue);
+          }
         };
 
     drawChart();
@@ -122,7 +143,7 @@ function MarathonChart({ data }) {
     };
     
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className = 'time_slider' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 
           <label>
             Time: {selectedTime} minutes
