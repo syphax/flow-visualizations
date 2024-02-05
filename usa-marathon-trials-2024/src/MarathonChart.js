@@ -8,7 +8,7 @@ function MarathonChart({ data }) {
 
   console.log('MarathonChart');
 
-  const [selectedTime, setSelectedTime] = useState(0);
+  const [selectedTime, setSelectedTime] = useState(60);
   const svgRef = useRef();
 
   useEffect(() => {
@@ -16,14 +16,26 @@ function MarathonChart({ data }) {
     // Function to draw the chart, similar to previous examples
     const drawChart = () => {
 
-        const filteredData = data.filter(d => d.time === selectedTime);
+        const filteredData_ = data.filter(d => d.time === selectedTime);
+
+        // Replace certain values
+        const filteredData = filteredData_.map(d => {
+          if (d.final_place === -1) {
+            return { ...d, final_place: 300 }; // Create a new object with the adjusted final_place
+          } else {
+            return d; // Return the original object if no adjustment is needed
+          }
+        });
+
 
         if (!filteredData.length) return; 
 
         if (!filteredData) return; // Guard clause if data is not yet available
         
-        filteredData.sort((a, b) => b.distance - a.distance);
-
+        //filteredData.sort((a, b) => b.distance - a.distance);
+        // Sort by 'final_place' in ascending order
+        filteredData.sort((a, b) => a.final_place - b.final_place);
+        
         const svg = d3.select(svgRef.current);
         svg.selectAll("*").remove(); // Clear SVG before redrawing
 
@@ -34,12 +46,34 @@ function MarathonChart({ data }) {
 
         // Scale for distances
         const xScale = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.distance * 1.5)])
+        //.domain([d3.min(filteredData, d => d.distance_diff_m), d3.max(filteredData, d => d.distance_diff_m * 1.5)])
+        .domain([-3200, 800])
         .range([0, width]);
+
+        // Vertical lines
+        svg.append("line") // Append a new line element for the zero line
+          .attr("x1", xScale(0))
+          .attr("y1", 0)
+          .attr("x2", xScale(0))
+          .attr("y2", height) // Assuming 'height' is the height of your chart
+          .attr("stroke", "black") // Dark color for the line at zero
+          .attr("stroke-width", 4); // Make it a bit thicker
+
+          for (let i = -1600; i <= 400; i += 100) {
+            svg.append("line") // Append a new line element for each line
+              .attr("x1", xScale(i))
+              .attr("y1", 0)
+              .attr("x2", xScale(i))
+              .attr("y2", height) // Assuming 'height' is the height of your chart
+              .attr("stroke", "grey") // Lighter color for these lines
+              .attr("stroke-width", 1) // Thinner lines
+              .attr("stroke-opacity", 0.5)
+          }
 
         // Color scale
         const colorScale = d3.scaleLinear()
-        .domain([d3.min(filteredData, d => d.distance), d3.max(filteredData, d => d.distance)])
+        .domain([d3.min(filteredData, d => d.distance_diff_m), d3.max(filteredData, d => d.distance_diff_m)])
+        //.domain([-1600, 200])
         .range(["lightblue", "darkblue"]);
         
         // Create a group for each runner
@@ -47,29 +81,22 @@ function MarathonChart({ data }) {
         .data(filteredData)
         .enter()
         .append("g")
-        .attr("transform", (d, i) => `translate(0, ${i * 5})`);
+        .attr("transform", (d, i) => `translate(0, ${(i + 2) * 5})`);
 
         // Add lines for distances
-        // runnerGroups.append("line")
-        // .attr("x1", 0)
-        // .attr("y1", 0)
-        // .attr("x2", d => xScale(d.distance))
-        // .attr("y2", 0)
-        // //.attr("stroke", "blue")
-        // .attr("stroke", d => colorScale(d.distance))
-        // .attr("stroke-width", 4);
 
         runnerGroups.append("line")
           .attr("x1", 0)
           .attr("y1", 0)
-          .attr("x2", d => xScale(d.distance))
+          .attr("x2", d => xScale(d.distance_diff_m))
           .attr("y2", 0)
-          .attr("stroke", "blue")
+          //.attr("stroke", "blue")
+          .attr("stroke", d => colorScale(d.distance_diff_m))
           .attr("stroke-width", 1); // Make the line thinner
 
         // Add circles at the right end of each line
         runnerGroups.append("circle")
-          .attr("cx", d => xScale(d.distance))
+          .attr("cx", d => xScale(d.distance_diff_m))
           .attr("cy", 0) // Adjust if your y positioning is different
           .attr("r", 3) // Small radius for the circle
           .attr("fill", "white") // White or light gray interior
@@ -78,11 +105,13 @@ function MarathonChart({ data }) {
     
         // Add names
         runnerGroups.append("text")
-        .attr("x", d => xScale(d.distance) + 5) // Position text at the end of the line
-        .attr("y", (d, i) => i ) // Adjust y based on row index
+        .attr("x", d => xScale(d.distance_diff_m) + 5) // Position text at the end of the line
+        .attr("y", (d, i) => 2 ) // Adjust y based on row index
         .attr("text-anchor", "start") // Adjust text anchor to start
         .text(d => d.name)
-        .style("font-size", "small");
+        //.style("font-size", "small");
+        .style("font-size", "10px"); 
+
         };
 
     drawChart();
@@ -103,7 +132,7 @@ function MarathonChart({ data }) {
               max={Math.max(0, ...data.map(d => d.time))}
               value={selectedTime}
               onChange={handleSliderChange}
-              step="5"
+              step="1"
             />
           </label>
           <svg ref={svgRef} style={{ alignSelf: 'stretch' }}></svg>
