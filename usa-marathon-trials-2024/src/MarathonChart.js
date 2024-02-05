@@ -50,15 +50,32 @@ function MarathonChart({ data }) {
         .attr("transform", (d, i) => `translate(0, ${i * 5})`);
 
         // Add lines for distances
-        runnerGroups.append("line")
-        .attr("x1", 0)
-        .attr("y1", 0)
-        .attr("x2", d => xScale(d.distance))
-        .attr("y2", 0)
-        //.attr("stroke", "blue")
-        .attr("stroke", d => colorScale(d.distance))
-        .attr("stroke-width", 4);
+        // runnerGroups.append("line")
+        // .attr("x1", 0)
+        // .attr("y1", 0)
+        // .attr("x2", d => xScale(d.distance))
+        // .attr("y2", 0)
+        // //.attr("stroke", "blue")
+        // .attr("stroke", d => colorScale(d.distance))
+        // .attr("stroke-width", 4);
 
+        runnerGroups.append("line")
+          .attr("x1", 0)
+          .attr("y1", 0)
+          .attr("x2", d => xScale(d.distance))
+          .attr("y2", 0)
+          .attr("stroke", "blue")
+          .attr("stroke-width", 1); // Make the line thinner
+
+        // Add circles at the right end of each line
+        runnerGroups.append("circle")
+          .attr("cx", d => xScale(d.distance))
+          .attr("cy", 0) // Adjust if your y positioning is different
+          .attr("r", 3) // Small radius for the circle
+          .attr("fill", "white") // White or light gray interior
+          .attr("stroke", "blue") // Thin blue border
+          .attr("stroke-width", 1); // Make the border thin
+    
         // Add names
         runnerGroups.append("text")
         .attr("x", d => xScale(d.distance) + 5) // Position text at the end of the line
