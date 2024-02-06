@@ -2,14 +2,54 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-//import { Slider } from '@mantine/core';
 
 function MarathonChart({ data }) {
 
   console.log('MarathonChart');
 
-  const [selectedTime, setSelectedTime] = useState(60);
   const svgRef = useRef();
+  const [selectedTime, setSelectedTime] = useState(120);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [intervalId, setIntervalId] = useState(null);
+  const [selectedRunners, setSelectedRunners] = useState([]);
+
+  const uniqueRunnerNames = [...new Set(data.map(d => d.name))];
+
+  const handleSliderChange = (event) => {
+    setSelectedTime(Number(event.target.value));
+  };
+
+  const handleCheckboxChange = (runnerName) => {
+    setSelectedRunners(prev => {
+      if (prev.includes(runnerName)) {
+        return prev.filter(r => r !== runnerName); // Remove runner if already selected
+      } else {
+        return [...prev, runnerName]; // Add runner if not selected
+      }
+    });
+  };
+
+  const handlePlay = () => {
+    if (!isPlaying) {
+      setIsPlaying(true);
+      const id = setInterval(() => {
+        setSelectedTime(prevTime => {
+          const nextTime = prevTime + 1;
+          if (nextTime > Math.max(...data.map(d => d.time))) {
+            clearInterval(id);
+            setIsPlaying(false);
+          }
+          return nextTime <= Math.max(...data.map(d => d.time)) ? nextTime : prevTime;
+        });
+      }, 100);
+      setIntervalId(id);
+    }
+  };
+
+  const handleStop = () => {
+    clearInterval(intervalId);
+    setIsPlaying(false);
+  };
 
   useEffect(() => {
 
@@ -92,17 +132,21 @@ function MarathonChart({ data }) {
           .attr("y2", 0)
           //.attr("stroke", "blue")
           .attr("stroke", d => colorScale(d.distance_diff_m))
-          .attr("stroke-width", 1); // Make the line thinner
+          .attr("stroke-width", d => selectedRunners.includes(d.name) ? 3 : 1); // Thicker line for selected runners
+          //.attr("stroke-width", 1); // Make the line thinner
 
         // Add circles at the right end of each line
         runnerGroups.append("circle")
           .attr("cx", d => xScale(d.distance_diff_m))
           .attr("cy", 0) // Adjust if your y positioning is different
-          .attr("r", 4) // Small radius for the circle
+          //.attr("r", 4) // Small radius for the circle
           //.attr("fill", "white") // White or light gray interior
-          .attr("fill", d => d.distance_diff_m >= 0 ? "orange" : "white")
+          //.attr("fill", d => d.distance_diff_m >= 0 ? "orange" : "white")
+          .attr("r", d => selectedRunners.includes(d.name) ? 6 : 3) // Bigger radius for selected runners
+          .attr("fill", d => selectedRunners.includes(d.name) ? "yellow" : d.distance_diff_m >= 0 ? "orange" : "white")
+        
           .attr("stroke", "blue") // Thin blue border
-          .attr("stroke-width", 1) // Make the border thin
+          .attr("stroke-width", 1); // Make the border thin
           
           // .each(function(d) { 
           //   d3.select(this)
@@ -118,7 +162,8 @@ function MarathonChart({ data }) {
         .text(d => d.name)
         .attr("fill", "white")
         //.style("font-size", "small");
-        .style("font-size", "10px"); 
+        //.style("font-size", "10px"); 
+        .style("font-size", d => selectedRunners.includes(d.name) ? "14px" : "10px"); // Bigger font size for selected runners
 
         const firstRunnerWithZeroDiff = filteredData.filter(d => d.distance_diff_m === 0)[0];
         console.log(firstRunnerWithZeroDiff)
@@ -136,29 +181,61 @@ function MarathonChart({ data }) {
         };
 
     drawChart();
-  }, [data, selectedTime]); 
+  }, [data, selectedTime, selectedRunners]); 
 
-    const handleSliderChange = (event) => {
-        setSelectedTime(Number(event.target.value));
-    };
-    
+    // const handleSliderChange = (event) => {
+    //     setSelectedTime(Number(event.target.value));
+    // };
+
     return (
-        <div className = 'time_slider' style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
-          <label>
-            Time: {selectedTime} minutes
-            <input
-              type="range"
-              min="0"
-              max={Math.max(0, ...data.map(d => d.time))}
-              value={selectedTime}
-              onChange={handleSliderChange}
-              step="1"
-            />
-          </label>
-          <svg ref={svgRef} style={{ alignSelf: 'stretch' }}></svg>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+        {/* Controls container for slider and buttons */}
+        <div className='controls-container' style={{ width: '80%', marginBottom: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Slider */}
+          <input
+            type="range"
+            min="0"
+            max={Math.max(0, ...data.map(d => d.time))}
+            value={selectedTime}
+            onChange={handleSliderChange}
+            step="1"
+            style={{ width: '80%' }}
+          />
+          <p>Time: {selectedTime} minutes</p>
+          {/* Buttons */}
+          <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', gap: '10px' }}>
+            <button onClick={handlePlay} disabled={isPlaying}>Play</button>
+            <button onClick={handleStop}>Stop</button>
+          </div>
         </div>
-      );
+  
+        {/* Panel and Chart container */}
+        <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+          {/* Checkbox Panel */}
+          <div className="checkbox-panel" style={{ marginRight: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', fontWeight: 'bold' }}>
+            Runners:
+            </div>
+            {uniqueRunnerNames.map((runnerName, index) => (
+              <div key={index}>
+                <input
+                  type="checkbox"
+                  id={`checkbox-${runnerName}`}
+                  checked={selectedRunners.includes(runnerName)}
+                  onChange={() => handleCheckboxChange(runnerName)}
+                />
+              <label htmlFor={`checkbox-${runnerName}`} style={{ fontSize: '12px' }}>{runnerName}</label>
+                
+              </div>
+            ))}
+          </div>
+  
+          {/* Chart */}
+          <svg ref={svgRef} style={{ width: '100%', height:'1060px' }}></svg>
+        </div>
+      </div>
+    );
+
     }
 
 export default MarathonChart;

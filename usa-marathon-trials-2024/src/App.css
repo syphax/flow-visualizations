@@ -61,3 +61,15 @@
   margin-top: 5px; 
   margin-bottom: 5px; 
 }
+
+.checkbox-panel {
+  margin-right: 20px; /* Space between the checkboxes and the chart */
+  max-height: 1060px; /* Or whatever fits your design */
+  overflow-y: auto; /* Enable scrolling if there are many runners */
+  align-items: flex-start; /* Align items to the start (left) */
+
+}
+
+.checkbox-panel > div {
+  text-align: left; /* Ensure content within each div is left-aligned */
+}
