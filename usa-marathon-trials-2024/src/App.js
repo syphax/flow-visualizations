@@ -25,7 +25,8 @@ function App() {
           Runners to the left of the dark zero-line are behind the 3rd place runner; runners to the right (up to 2) are ahead. 
           The top 3 runners at any time have orange circles.
           The runners are ordered by their final placing; top finishers at the top.
-          Each vertical line represents 100m (relative to the 3rd place runner).
+          Each vertical grey line represents 1/4 mile (relative to the 3rd place runner).
+          Orange lines and text indicate mile markers.
           Use the slider to scroll through different parts of the race.</p>
           <p class='footnote'>NOTE: The runners' positions are interpolated from the splits available for each mile, 
           and are thus approximate.
