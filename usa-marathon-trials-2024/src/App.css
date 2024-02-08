@@ -55,11 +55,26 @@
   white-space: nowrap; 
 }
 
+.intro {
+  text-align: left;
+  width: 80%;
+}
+
 .footnote {
+  text-align: left;
+  width: 70%;
   font-size: 0.75em; 
   color: #666;
   margin-top: 5px; 
-  margin-bottom: 5px; 
+  margin-bottom: 0px; 
+}
+
+.controls {
+  text-align: left;
+  width: 70%;
+  font-size: 0.85em; 
+  margin-top: 5px; 
+  margin-bottom: 0px; 
 }
 
 .checkbox-panel {
