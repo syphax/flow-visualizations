@@ -37,3 +37,54 @@
   }
 }
 
+.dropdown {
+  margin-top: 20px; 
+  margin-bottom: 20px; 
+  display: flex; 
+  align-items: center; 
+}
+
+.time_slider {
+  margin-bottom: 20px; 
+  display: flex; 
+  align-items: center; 
+}
+
+.time_slider label {
+  margin-right: 10px; 
+  white-space: nowrap; 
+}
+
+.intro {
+  text-align: left;
+  width: 80%;
+}
+
+.footnote {
+  text-align: left;
+  width: 70%;
+  font-size: 0.75em; 
+  color: #666;
+  margin-top: 5px; 
+  margin-bottom: 0px; 
+}
+
+.controls {
+  text-align: left;
+  width: 70%;
+  font-size: 0.85em; 
+  margin-top: 5px; 
+  margin-bottom: 0px; 
+}
+
+.checkbox-panel {
+  margin-right: 20px; /* Space between the checkboxes and the chart */
+  max-height: 1060px; /* Or whatever fits your design */
+  overflow-y: auto; /* Enable scrolling if there are many runners */
+  align-items: flex-start; /* Align items to the start (left) */
+
+}
+
+.checkbox-panel > div {
+  text-align: left; /* Ensure content within each div is left-aligned */
+}

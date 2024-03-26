@@ -29,7 +29,8 @@ function DataLoader({ onDataLoaded }) {
 
   // Optionally, return a loading indicator or null if no UI is needed
   return (
-    <div>
+    <div className='dropdown'>
+      <label htmlFor="gender-select">Select Race:</label>
       <select value={gender} onChange={e => setGender(e.target.value)}>
         <option value="men">Men</option>
         <option value="women">Women</option>
